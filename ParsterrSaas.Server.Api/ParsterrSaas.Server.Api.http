@@ -1,0 +1,6 @@
+@ParsterrSaas.Server.Api_HostAddress = http://localhost:5084
+
+GET {{ParsterrSaas.Server.Api_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

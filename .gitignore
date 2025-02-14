@@ -398,3 +398,7 @@ FodyWeavers.xsd
 
 # JetBrains Rider
 *.sln.iml
+
+ParsterrSaas.Server.Api/appsettings.Development.json
+
+.idea/.idea.ParsterrSaas.Server.Api/.idea/
