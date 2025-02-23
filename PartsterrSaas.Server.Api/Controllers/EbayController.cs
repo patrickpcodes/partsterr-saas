@@ -18,7 +18,7 @@ public class EbayController : ControllerBase
     public async Task<IEnumerable<EbayOrder>> GetOrders()
     {
         var orders = await _ebayApiManager.GetAllEbayOrdersAfterDate();
-        return orders;
+        return orders.Take(10  );
 
     }
 }

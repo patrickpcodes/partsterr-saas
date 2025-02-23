@@ -8,16 +8,16 @@ public class EbayApiManager : IEbayApiManager
 {
     private readonly EbaySettings _ebaySettings;
 
-    public EbayApiManager(IOptions<EbaySettings> ebaySettings)
+    public EbayApiManager( IOptions<EbaySettings> ebaySettings )
     {
         _ebaySettings = ebaySettings.Value;
     }
-    
-    private async Task<EbayAccessToken> GetEbayAccessToken( )
+
+    private async Task<EbayAccessToken> GetEbayAccessToken()
     {
         var ebayRefreshTokenSettings = _ebaySettings.EbayRefreshTokens.FirstOrDefault();
 
-        using( var refreshClient = new HttpClient() )
+        using ( var refreshClient = new HttpClient() )
         {
             refreshClient.DefaultRequestHeaders.Authorization =
                 new AuthenticationHeaderValue( "Basic", ebayRefreshTokenSettings.BasicAuthToken );
@@ -29,7 +29,7 @@ public class EbayApiManager : IEbayApiManager
 
             var attemps = 10;
             var count = 0;
-            while( count < attemps )
+            while ( count < attemps )
             {
                 try
                 {
@@ -42,9 +42,8 @@ public class EbayApiManager : IEbayApiManager
 
                     return JsonConvert.DeserializeObject<EbayAccessToken>( temp2 );
                 }
-                catch( Exception e )
+                catch ( Exception e )
                 {
-
                 }
 
                 count++;
@@ -54,14 +53,13 @@ public class EbayApiManager : IEbayApiManager
         }
     }
 
-    
-    
-    public async Task<List<EbayOrder>> GetAllEbayOrdersAfterDate(  )
+
+    public async Task<List<EbayOrder>> GetAllEbayOrdersAfterDate()
     {
         var ebayAccessToken = await GetEbayAccessToken();
-        if(ebayAccessToken == null)
+        if ( ebayAccessToken == null )
             return new List<EbayOrder>();
-        using( var httpClient = new HttpClient() )
+        using ( var httpClient = new HttpClient() )
         {
             httpClient.DefaultRequestHeaders.Authorization =
                 new AuthenticationHeaderValue( "Bearer", ebayAccessToken.AccessToken );
@@ -72,22 +70,25 @@ public class EbayApiManager : IEbayApiManager
 
             List<EbayOrder> ebayOrders = new List<EbayOrder>();
 
-            while( !reachedEnd )
+            while ( !reachedEnd )
             {
-                var response = await httpClient.GetStringAsync( _ebaySettings.EbayUrls.OrderUrl + $"?limit={limit}&offset={offset}" );
+                var response =
+                    await httpClient.GetStringAsync(
+                        _ebaySettings.EbayUrls.OrderUrl + $"?limit={limit}&offset={offset}" );
 
                 var ebayOrderResponse = JsonConvert.DeserializeObject<EbayOrdersResponse>( response );
 
-                if( ebayOrderResponse != null && ebayOrderResponse.Orders != null && ebayOrderResponse.Orders.Count > 0 )
+                if ( ebayOrderResponse != null && ebayOrderResponse.Orders != null &&
+                     ebayOrderResponse.Orders.Count > 0 )
                 {
                     //ebayOrders = ebayOrderResponse.Orders;
 
-                    if( ebayOrderResponse.Orders?.Count < limit )
+                    if ( ebayOrderResponse.Orders?.Count < limit )
                         reachedEnd = true;
 
                     var ordersGreaterThenMinDate = ebayOrderResponse.Orders.ToList();
 
-                    if( ordersGreaterThenMinDate.Count < ebayOrderResponse.Orders?.Count )
+                    if ( ordersGreaterThenMinDate.Count < ebayOrderResponse.Orders?.Count )
                     {
                         reachedEnd = true;
                     }
@@ -95,14 +96,17 @@ public class EbayApiManager : IEbayApiManager
                     {
                         offset += limit;
                     }
-                    ebayOrders.AddRange( ordersGreaterThenMinDate );
 
+                    ebayOrders.AddRange( ordersGreaterThenMinDate );
+                    if ( ebayOrders.Count > 50 )
+                        break;
                 }
                 else
                 {
                     break;
                 }
             }
+
             return ebayOrders;
         }
     }

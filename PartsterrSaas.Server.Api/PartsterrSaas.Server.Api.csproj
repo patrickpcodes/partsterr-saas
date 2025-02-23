@@ -4,7 +4,7 @@
     <TargetFramework>net8.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
-    <UserSecretsId>aspnet-ParsterrSaas.Server.Api-9ccfc0c0-603c-40bc-913f-8473988a97fc</UserSecretsId>
+    <UserSecretsId>aspnet-PartsterrSaas.Server.Api-9ccfc0c0-603c-40bc-913f-8473988a97fc</UserSecretsId>
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
     <DockerfileContext>.</DockerfileContext>
   </PropertyGroup>
