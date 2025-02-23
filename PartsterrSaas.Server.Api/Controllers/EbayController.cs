@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using PartsterrSaas.Common;
 
-namespace ParsterrSaas.Server.Api.Controllers;
+namespace PartsterrSaas.Server.Api.Controllers;
 
 [ApiController]
 [Route("[controller]")]
@@ -15,10 +16,10 @@ public class EbayController : ControllerBase
     }
 
     [HttpGet( Name = "Ebay" )]
-    public async Task<IEnumerable<EbayOrder>> GetOrders()
+    public async Task<IEnumerable<PartsterrOrder>> GetOrders()
     {
         var orders = await _ebayApiManager.GetAllEbayOrdersAfterDate();
-        return orders.Take(10  );
+        return PartsterrOrder.ConvertToPartsterrOrders(orders.Take(10).ToList());
 
     }
 }

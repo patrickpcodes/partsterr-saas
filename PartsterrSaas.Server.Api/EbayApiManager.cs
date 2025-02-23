@@ -1,8 +1,10 @@
 ﻿using System.Net.Http.Headers;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
+using ParsterrSaas.Server.Api;
+using PartsterrSaas.Common;
 
-namespace ParsterrSaas.Server.Api;
+namespace PartsterrSaas.Server.Api;
 
 public class EbayApiManager : IEbayApiManager
 {

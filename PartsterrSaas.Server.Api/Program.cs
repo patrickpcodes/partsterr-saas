@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Identity.Web;
 using ParsterrSaas.Server.Api;
+using PartsterrSaas.Server.Api;
 
 var builder = WebApplication.CreateBuilder(args);
 

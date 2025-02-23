@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Identity.Web.Resource;
+using PartsterrSaas.Server.Api;
 
 namespace ParsterrSaas.Server.Api.Controllers;
 

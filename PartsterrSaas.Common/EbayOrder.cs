@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
 
-namespace ParsterrSaas.Server.Api;
+namespace PartsterrSaas.Common;
 
 public enum EbayOrderFulfillmentStatus
 {
