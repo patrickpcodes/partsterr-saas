@@ -79,8 +79,11 @@ export async function getEbayAccessToken(
   if (!ebayRefreshTokenSettings) {
     throw new Error("No eBay refresh token settings found.");
   }
-
-  const attempts = 10;
+  console.log(
+    "ebayRefreshTokenSettings Auth Token",
+    ebayRefreshTokenSettings.BasicAuthToken
+  );
+  const attempts = 1;
   let count = 0;
 
   while (count < attempts) {
@@ -125,10 +128,25 @@ export async function getEbayAccessToken(
   );
 }
 
-export async function getAllEbayOrdersAfterDate(
-  ebaySettings: EbaySettings
-): Promise<EbayOrder[]> {
+export const ebaySettings = {
+  EbayRefreshTokens: [
+    {
+      BasicAuthToken: process.env.EBAY_BASIC_AUTH_TOKEN || "",
+      GrantType: "refresh_token",
+      RefreshToken: process.env.EBAY_REFRESH_TOKEN || "",
+      Scope: "https://api.ebay.com/oauth/api_scope/sell.fulfillment",
+    },
+  ],
+  EbayUrls: {
+    TokenUrl: "https://api.ebay.com/identity/v1/oauth2/token",
+    OrderUrl: "https://api.ebay.com/sell/fulfillment/v1/order",
+  },
+};
+
+export async function getAllEbayOrdersAfterDate(): Promise<EbayOrder[]> {
+  // ebaySettings: EbaySettings
   try {
+    console.log("EbaySettings", ebaySettings);
     // First, get the access token
     const ebayAccessToken = await getEbayAccessToken(ebaySettings);
     console.log("eBay access token:", ebayAccessToken);
@@ -192,5 +210,44 @@ export async function getAllEbayOrdersAfterDate(
   } catch (err) {
     console.error("Error in getAllEbayOrdersAfterDate:", err);
     return [];
+  }
+}
+
+export async function getEbayOrderById(
+  // ebaySettings: EbaySettings,
+  orderId: string
+): Promise<EbayOrder | null> {
+  // Get an access token first
+  const ebayAccessToken = await getEbayAccessToken(ebaySettings);
+
+  if (!ebayAccessToken?.access_token) {
+    throw new Error("Failed to retrieve eBay access token.");
+  }
+
+  // Use eBay's Sell Fulfillment API to get a single order by ID
+  const url = `${ebaySettings.EbayUrls.OrderUrl}/${orderId}`;
+  const response = await fetch(url, {
+    headers: {
+      Authorization: `Bearer ${ebayAccessToken.access_token}`,
+    },
+  });
+
+  if (!response.ok) {
+    // We can log or handle errors here (like 404 or 500).
+    console.error(
+      `Failed to fetch eBay order ${orderId}: ${response.status} ${response.statusText}`
+    );
+    return null;
+  }
+
+  const rawOrder = await response.json();
+
+  // Convert that raw eBay JSON into your minimal EbayOrder shape
+  try {
+    return parseEbayOrder(rawOrder);
+  } catch (err) {
+    console.error("Error parsing eBay order:", err);
+    // Return null or re-throw, depending on how you want to handle it
+    return null;
   }
 }
